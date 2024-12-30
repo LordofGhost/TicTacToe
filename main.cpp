@@ -6,7 +6,7 @@
 void playerMove(std::bitset<9> & boardSelf, std::bitset<9> & boardTarget);
 void aiMove(std::bitset<9> & boardSelf, std::bitset<9> & boardTarget);
 void convertBoard(std::bitset<9> & boardAi, std::bitset<9> & boardPlayer, char* boardInChar);
-void printBoard3x3(char* position);
+void printBoard3x3(const char* position);
 bool checkForRow(std::bitset<9> & board);
 bool isGameRunning(std::bitset<9> & boardPlayer, std::bitset<9> & boardAi);
 bool isPlayerWinner(std::bitset<9> & boardPlayer);
@@ -52,7 +52,7 @@ void convertBoard(std::bitset<9> & boardAi, std::bitset<9> & boardPlayer, char* 
 }
 
 // CLI output
-void printBoard3x3(char* position) {
+void printBoard3x3(const char* position) {
     printf("   |   |   \n");
     printf(" %c | %c | %c \n", position[0], position[1], position[2]);
     printf("___|___|___\n");
@@ -66,15 +66,15 @@ void printBoard3x3(char* position) {
 
 void playerMove(std::bitset<9> & boardSelf, std::bitset<9> & boardTarget) {
     std::cout << "Which box would you like to check? (1-9) " ;
-    int checkedbox;
-    std::cin >> checkedbox;
-    if (boardSelf[checkedbox - 1]) {
+    int checkedBox;
+    std::cin >> checkedBox;
+    if (boardSelf[checkedBox - 1]) {
         std::cout << "The box is already taken by you!" << std::endl;
         playerMove(boardSelf, boardTarget);
-    } else if (boardTarget[checkedbox - 1]) {
+    } else if (boardTarget[checkedBox - 1]) {
         std::cout << "The box is already taken by the AI!" << std::endl;
     } else {
-        boardSelf[checkedbox - 1] = true;
+        boardSelf[checkedBox - 1] = true;
     }
 }
 
@@ -93,27 +93,25 @@ void aiMove(std::bitset<9> & boardSelf, std::bitset<9> & boardTarget) {
 }
 
 bool checkForRow(std::bitset<9> & board) {
+
     const std::bitset<9> rows[8] = {0b1110000,0b000111000,0b000000111, // horizontal
                                     0b100100100,0b010010010,0b001001001, // vertical
                                     0b100010001,0b001010100}; // diagonal
+    // lay the position pattern over the winning pattern and if the winning pattern in contained in the current position one, return true
     for (std::bitset<9> row : rows) {
-        if (row == board) return true;
+        if ((board & row) == row) return true;
     }
     return false;
 }
 
 bool isGameRunning(std::bitset<9> & boardPlayer, std::bitset<9> & boardAi) {
-    if (checkForRow(boardPlayer) == false && checkForRow(boardAi) == false) {
-        return true;
-    } else {
-        return false;
-    }
+    if (boardPlayer.count() < 3 && boardAi.count() < 3) return true;
+    if (checkForRow(boardPlayer) == false && checkForRow(boardAi) == false) return true;
+    return false;
 }
 
 bool isPlayerWinner(std::bitset<9> & boardPlayer) {
-    if (checkForRow(boardPlayer)) {
-        return true;
-    } else {
-        return false;
-    }
+    if (boardPlayer.count() < 3) return false;
+    if (checkForRow(boardPlayer)) return true;
+    return false;
 }
