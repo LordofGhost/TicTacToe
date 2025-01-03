@@ -3,6 +3,9 @@
 #define ENEMY_H
 #include <bitset>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
+
 #include "logic.h"
 #include "main.h"
 #include <iostream>

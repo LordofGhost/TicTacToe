@@ -1,11 +1,11 @@
 #include "enemy.h"
 
-#include "logic.h"
-
 void aiMove(std::bitset<9> & boardSelf, std::bitset<9> & boardTarget) {
     // check if empty board
     if (boardTarget.count() == 0) {
-        boardSelf.flip(5);
+        std::srand(time(0));
+        int startPosition = (std::rand() % 9) + 1;
+        boardSelf.flip(startPosition);
         return;
     }
 
