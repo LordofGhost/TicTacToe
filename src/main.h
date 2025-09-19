@@ -1,10 +1,10 @@
 
 #ifndef MAIN_H
 #define MAIN_H
-#include <iostream>
-#include <bitset>
-#include "logic.h"
 #include "enemy.h"
+#include "logic.h"
+#include <bitset>
+#include <iostream>
 
 // action functions
 void playerMove(std::bitset<9> & boardSelf, std::bitset<9> & boardTarget);
