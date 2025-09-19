@@ -3,9 +3,4 @@ project(TicTacToe)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(TicTacToe main.cpp
-        enemy.cpp
-        logic.cpp
-        logic.h
-        enemy.h
-        main.h)
+add_subdirectory(src)
