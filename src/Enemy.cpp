@@ -1,17 +1,24 @@
-#include "enemy.h"
+#include "Enemy.h"
 
-void aiMove(std::bitset<9> & boardSelf, std::bitset<9> & boardTarget) {
+#include <random>
+
+#include "Logic.h"
+
+void Enemy::aiMove(std::bitset<9> &boardSelf, const std::bitset<9> &boardTarget) {
     // check if empty board
     if (boardTarget.count() == 0) {
-        std::srand(time(0));
-        int startPosition = (std::rand() % 9) + 1;
+        // Generate random number between 0 and 8
+        std::mt19937 rng(std::random_device{}());
+        std::uniform_int_distribution<int> dist(0, 8);
+        const int startPosition = dist(rng);
+
         boardSelf.flip(startPosition);
         return;
     }
 
-    std::vector<std::bitset<9>> moves = generateMoves(boardSelf, boardTarget);
+    const std::vector<std::bitset<9> > moves = generateMoves(boardSelf, boardTarget);
     int highScore = -99999999;
-    for (std::bitset<9> move : moves) {
+    for (std::bitset<9> move: moves) {
         int score = max(move, boardTarget, 1);
         if (score > highScore) {
             boardSelf = move;
@@ -20,16 +27,16 @@ void aiMove(std::bitset<9> & boardSelf, std::bitset<9> & boardTarget) {
     }
 }
 
-int max(std::bitset<9> boardSelf, std::bitset<9> boardTarget, int depth) {
+int Enemy::max(std::bitset<9> boardSelf, std::bitset<9> boardTarget, int depth) {
     // if the game ends with this move, give it a score
-    if (checkForWinningRow(boardSelf)) return (500 / depth);
-    if (checkForDraw(boardSelf, boardTarget)) return 0;
+    if (Logic::checkForWinningRow(boardSelf)) return (500 / depth);
+    if (Logic::checkForDraw(boardSelf, boardTarget)) return 0;
 
     // create all possible enemy moves
-    std::vector<std::bitset<9>> moves = generateMoves(boardTarget, boardSelf);
+    std::vector<std::bitset<9> > moves = generateMoves(boardTarget, boardSelf);
     // go over the enemy moves and find the one worst for the AI
     int lowestScore = 99999999;
-    for (std::bitset<9> move : moves) {
+    for (std::bitset<9> move: moves) {
         int score = min(move, boardSelf, depth++);
         if (score < lowestScore) {
             lowestScore = score;
@@ -38,15 +45,15 @@ int max(std::bitset<9> boardSelf, std::bitset<9> boardTarget, int depth) {
     return lowestScore;
 }
 
-int min(std::bitset<9> boardSelf, std::bitset<9> boardTarget, int depth) {
+int Enemy::min(std::bitset<9> boardSelf, std::bitset<9> boardTarget, int depth) {
     // evaluation of move
-    if (checkForWinningRow(boardSelf)) return -(500 / depth);
-    if (checkForDraw(boardSelf, boardTarget)) return 0;
+    if (Logic::checkForWinningRow(boardSelf)) return -(500 / depth);
+    if (Logic::checkForDraw(boardSelf, boardTarget)) return 0;
 
     // create all possible AI moves, after that enemy move
-    std::vector<std::bitset<9>> moves = generateMoves(boardTarget, boardSelf);
+    std::vector<std::bitset<9> > moves = generateMoves(boardTarget, boardSelf);
     int highestScore = -99999999;
-    for (std::bitset<9> move : moves) {
+    for (std::bitset<9> move: moves) {
         int score = max(move, boardSelf, depth++);
         if (score > highestScore) {
             highestScore = score;
@@ -55,10 +62,10 @@ int min(std::bitset<9> boardSelf, std::bitset<9> boardTarget, int depth) {
     return highestScore;
 }
 
-std::vector<std::bitset<9>> generateMoves(const std::bitset<9> myBoard, const std::bitset<9> enemyBoard) {
+std::vector<std::bitset<9> > Enemy::generateMoves(const std::bitset<9> myBoard, const std::bitset<9> enemyBoard) {
     // flipped taken positions from both players together
     std::bitset<9> freePositions = ~(myBoard | enemyBoard);
-    std::vector<std::bitset<9>> moves;
+    std::vector<std::bitset<9> > moves;
 
     for (int bitCounter = 0; bitCounter < 9; bitCounter++) {
         if (freePositions.test(bitCounter)) {
