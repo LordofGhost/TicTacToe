@@ -1,8 +1,8 @@
 
 #ifndef MAIN_H
 #define MAIN_H
-#include "enemy.h"
-#include "logic.h"
+#include "Enemy.h"
+#include "Logic.h"
 #include <bitset>
 #include <iostream>
 

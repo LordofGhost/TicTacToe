@@ -16,9 +16,9 @@ int main() {
 
             playerMove(boardPlayer, boardAi);
             if (!isGameRunning(boardPlayer, boardAi)) continue;
-            aiMove(boardAi, boardPlayer);
+            Enemy::aiMove(boardAi, boardPlayer);
         } else {
-            aiMove(boardAi, boardPlayer);
+            Enemy::aiMove(boardAi, boardPlayer);
             if (!isGameRunning(boardPlayer, boardAi)) continue;
 
             convertBoard(boardAi, boardPlayer, boardInChar);
@@ -32,11 +32,11 @@ int main() {
     printBoard3x3(boardInChar);
 
     // output game result
-    if (checkForWinningRow(boardPlayer)) {
+    if (Logic::checkForWinningRow(boardPlayer)) {
         std::cout << "You won!" << std::endl;
-    } else if (checkForWinningRow(boardAi)) {
+    } else if (Logic::checkForWinningRow(boardAi)) {
         std::cout << "The AI won!" << std::endl;
-    } else if (checkForDraw(boardPlayer, boardAi)) {
+    } else if (Logic::checkForDraw(boardPlayer, boardAi)) {
         std::cout << "It's a draw!" << std::endl;
     }
 
@@ -86,6 +86,6 @@ void playerMove(std::bitset<9> & boardSelf, std::bitset<9> & boardTarget) {
 
 bool isGameRunning(std::bitset<9> & boardPlayer, std::bitset<9> & boardAi) {
     //if (boardPlayer.count() < 3 && boardAi.count() < 3) return true;
-    if (!checkForWinningRow(boardPlayer) && !checkForWinningRow(boardAi) && !checkForDraw(boardPlayer, boardAi)) return true;
+    if (!Logic::checkForWinningRow(boardPlayer) && !Logic::checkForWinningRow(boardAi) && !Logic::checkForDraw(boardPlayer, boardAi)) return true;
     return false;
 }
