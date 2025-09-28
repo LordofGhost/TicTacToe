@@ -16,9 +16,9 @@ int main() {
 
             playerMove(boardPlayer, boardAi);
             if (!isGameRunning(boardPlayer, boardAi)) continue;
-            Enemy::aiMove(boardAi, boardPlayer);
+            boardAi = Enemy::aiMove(boardAi, boardPlayer);
         } else {
-            Enemy::aiMove(boardAi, boardPlayer);
+            boardAi = Enemy::aiMove(boardAi, boardPlayer);
             if (!isGameRunning(boardPlayer, boardAi)) continue;
 
             convertBoard(boardAi, boardPlayer, boardInChar);
