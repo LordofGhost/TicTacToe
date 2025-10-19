@@ -4,9 +4,11 @@
 #include <bitset>
 #include <vector>
 
-class Enemy {
+#include "Player.h"
+
+class Enemy : public Player {
 public:
-    static std::bitset<9> aiMove(const std::bitset<9> &boardSelf, const std::bitset<9> &boardTarget);
+    void move(const Player &enemy) override;
 
 private:
     static std::vector<std::bitset<9> > generateMoves(std::bitset<9> myBoard, std::bitset<9> enemyBoard);

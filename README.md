@@ -1,6 +1,6 @@
 # Tic Tac Toe
 
-This is a simple terminal based TicTacToe game.
+This is a terminal based TicTacToe game.
 
 I created this project because I was interested in the miniMax algorithm and fascinated by the idea of creating an AI that is better in a game than myself.
 
