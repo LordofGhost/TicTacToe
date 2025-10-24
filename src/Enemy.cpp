@@ -1,66 +1,61 @@
 #include "Enemy.h"
 
 #include <random>
-#include <limits>
+#include <iostream>
+#include <ostream>
 
-void Enemy::move(const Player &player) {
-    std::bitset<9> finalBoard(0);
-
+void Enemy::move(Board &board) {
+    i = 1;
     // When the AI starts, generate a random start position
-    if (player.getBoard().count() == 0) {
+    if (board.isEmpty()) {
         std::mt19937 rng(std::random_device{}());
         std::uniform_int_distribution dist(0, 8);
         const int startPosition = dist(rng);
 
-        this->getBoard() = finalBoard.flip(startPosition);
+        board.makeMove(startPosition, Board::Player::O);
         return;
     }
 
-    // Generate all possible moves
-    const std::vector<std::bitset<9> > moves = generateMoves(this->getBoard(), player.getBoard());
+    int bestScore = -EVAL_INFINITE;
+    std::pair<int, int> bestMove = {-1, -1};
 
-    int highScore = std::numeric_limits<int>::min();
+    for (const auto &move: board.availableMoves()) {
+        board.makeMove(move.first, move.second, Board::Player::O);
 
-    // Go over every possible move and evaluate them with a score
-    for (const std::bitset move: moves) {
-        int score = negamax(move, player.getBoard(), 1);
-        if (score > highScore) {
-            finalBoard = move;
-            highScore = score;
+        int score = -negamax(board, Board::otherPlayer(Board::Player::O), 8);
+
+
+        board.unmakeMove(move.first, move.second, Board::Player::O);
+
+        if (score > bestScore) {
+            bestScore = score;
+            bestMove = move;
         }
     }
 
-    this->getBoard() = finalBoard;
+    if (bestMove.first >= 0) {
+        board.makeMove(bestMove.first, bestMove.second, Board::Player::O);
+    } else {
+        std::cerr << "No move found!" << std::endl;
+    }
 }
 
-int Enemy::negamax(std::bitset<9> boardSelf, std::bitset<9> boardTarget, int depth) {
-    // evaluation of move
-    if (checkForWinningRow(boardSelf)) return 500 / depth;
-    if (checkForDraw(boardSelf, boardTarget)) return 0;
+int Enemy::negamax(Board &board, const Board::Player &p, const int &depth) {
+    // Check for terminal node
+    if (board.hasWon(p)) return EVAL_MATE + depth;
+    if (board.isDraw() || depth <= 0) return 0;
 
-    // Create all possible moves, go over them, update highestScore
-    int highestScore = std::numeric_limits<int>::min();
-    for (std::bitset move: generateMoves(boardTarget, boardSelf)) {
-        int score = -negamax(move, boardSelf, depth++);
+    int best = -EVAL_INFINITE;
 
-        if (score > highestScore) highestScore = score;
+    for (const auto &move: board.availableMoves()) {
+        board.makeMove(move.first, move.second, p);
+
+        int score = -negamax(board, Board::otherPlayer(p), depth - 1);
+
+        board.unmakeMove(move.first, move.second, p);
+
+        if (score > best) best = score;
     }
 
-    // Return the highest score
-    return highestScore;
-}
-
-std::vector<std::bitset<9> > Enemy::generateMoves(const std::bitset<9> myBoard, const std::bitset<9> enemyBoard) {
-    // flipped taken positions from both players together
-    std::bitset<9> freePositions = ~(myBoard | enemyBoard);
-    std::vector<std::bitset<9> > moves;
-
-    for (int bitCounter = 0; bitCounter < 9; bitCounter++) {
-        if (freePositions.test(bitCounter)) {
-            moves.push_back(myBoard);
-            moves.back()[bitCounter] = true;
-            freePositions[bitCounter] = false;
-        }
-    }
-    return moves;
+    return best;
 }

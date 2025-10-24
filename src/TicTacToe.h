@@ -1,13 +1,11 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "Player.h"
-#include "Enemy.h"
+#include "Board.h"
 
 class TicTacToe {
     bool playerFirst;
-    Enemy enemy;
-    Player player;
+    Board board;
 
 public:
     TicTacToe();
@@ -15,11 +13,11 @@ public:
     // Main game loop
     void game();
 
-    void printBoard();
+    void printResult() const;
 
-    void printResult();
+    [[nodiscard]] bool isGameRunning() const;
 
-    bool isGameRunning();
+    void playerMove();
 };
 
 #endif //MAIN_H

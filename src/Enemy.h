@@ -2,18 +2,19 @@
 #define ENEMY_H
 
 #include <bitset>
-#include <vector>
 
-#include "Player.h"
+#include "Board.h"
 
-class Enemy : public Player {
+constexpr int EVAL_MATE = 30000;
+constexpr int EVAL_INFINITE = 31000;
+constexpr int EVAL_NONE = 31100;
+
+class Enemy {
 public:
-    void move(const Player &enemy) override;
+    static void move(Board &board);
 
 private:
-    static std::vector<std::bitset<9> > generateMoves(std::bitset<9> myBoard, std::bitset<9> enemyBoard);
-
-    static int negamax(std::bitset<9> boardSelf, std::bitset<9> boardTarget, int depth);
+    static int negamax(Board &board, const Board::Player &p, const int &depth);
 };
 
 #endif //ENEMY_H

@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-#include "Player.h"
 #include "Enemy.h"
 
 int main() {
@@ -26,63 +25,51 @@ TicTacToe::TicTacToe() {
 void TicTacToe::game() {
     while (isGameRunning()) {
         if (playerFirst) {
-            printBoard();
+            std::cout << board.toString() << std::endl;
 
-            player.move(enemy);
+            playerMove();
             if (!isGameRunning()) continue;
-            enemy.move(player);
+            Enemy::move(board);
         } else {
-            enemy.move(player);
+            Enemy::move(board);
             if (!isGameRunning()) continue;
 
-            printBoard();
+            std::cout << board.toString() << std::endl;
 
-            player.move(enemy);
+            playerMove();
         }
     }
 
-    printBoard();
+    std::cout << board.toString() << std::endl;
 
     printResult();
 }
 
-void TicTacToe::printBoard() {
-    char position[9];
-
-    for (int i = 0; i < 9; i++) {
-        if (enemy.getBoard()[i] == 1) {
-            position[i] = '0';
-        } else if (player.getBoard()[i] == 1) {
-            position[i] = 'X';
-        } else {
-            position[i] = ' ';
-        }
-    }
-
-    std::println("   |   |   ");
-    std::println(" {} | {} | {} ", position[0], position[1], position[2]);
-    std::println("___|___|___");
-    std::println("   |   |   ");
-    std::println(" {} | {} | {} ", position[3], position[4], position[5]);
-    std::println("___|___|___");
-    std::println("   |   |   ");
-    std::println(" {} | {} | {} ", position[6], position[7], position[8]);
-    std::println("   |   |   ");
-}
-
-void TicTacToe::printResult() {
-    if (Player::checkForWinningRow(player.getBoard())) {
+void TicTacToe::printResult() const {
+    if (board.hasWon(Board::Player::X)) {
         std::cout << "You won!" << std::endl;
-    } else if (Player::checkForWinningRow(enemy.getBoard())) {
+    } else if (board.hasWon(Board::Player::O)) {
         std::cout << "The AI won!" << std::endl;
-    } else if (Player::checkForDraw(player.getBoard(), enemy.getBoard())) {
+    } else if (board.isDraw()) {
         std::cout << "It's a draw!" << std::endl;
     }
 }
 
-bool TicTacToe::isGameRunning() {
-    if (!Player::checkForWinningRow(player.getBoard()) && !Player::checkForWinningRow(enemy.getBoard()) && !
-        Player::checkForDraw(player.getBoard(), enemy.getBoard()))
+bool TicTacToe::isGameRunning() const {
+    if (board.winner() == std::nullopt && !board.isDraw())
         return true;
     return false;
+}
+
+void TicTacToe::playerMove() {
+    std::print("Which box would you like to check? (1-9) ");
+    int checkedBox;
+    std::cin >> checkedBox;
+
+    if (!board.isCellEmpty(checkedBox - 1)) {
+        std::println("The box is already taken !");
+        playerMove();
+    } else {
+        board.makeMove(checkedBox - 1, Board::Player::X);
+    }
 }
