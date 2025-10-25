@@ -5,7 +5,6 @@
 #include <ostream>
 
 void Enemy::move(Board &board) {
-    i = 1;
     // When the AI starts, generate a random start position
     if (board.isEmpty()) {
         std::mt19937 rng(std::random_device{}());

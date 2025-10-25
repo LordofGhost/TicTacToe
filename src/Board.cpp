@@ -126,7 +126,7 @@ bool Board::isDraw() const {
         }
     }
 
-    return false;
+    return true;
 }
 
 std::string Board::toString() const {
